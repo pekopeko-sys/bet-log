@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BET LOG">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" id="ti" href="data:,">
+<title>BET LOG</title>
+<style>
+:root{--bg:#05070d;--card:#0c1222;--line:#1d2a4a;--tx:#eceff7;--mut:#8791ad;--gold:#d4af37;--win:#4ade80;--lose:#ff6b81;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;-webkit-text-size-adjust:100%}
+#app{max-width:560px;margin:0 auto;padding:8px 10px 0;display:flex;flex-direction:column;min-height:calc(100vh - env(safe-area-inset-top,0px));min-height:calc(100dvh - env(safe-area-inset-top,0px))}
+#v{padding-bottom:14px}
+h1{font-size:18px;letter-spacing:.14em;margin:6px 2px 10px;font-weight:600}
+h2{font-size:13px;color:var(--mut);font-weight:500;margin:16px 2px 6px;letter-spacing:.06em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:8px}.sp{flex:1}
+.mut{color:var(--mut);font-size:12px}
+.big{font-size:30px;font-weight:700;line-height:1.3}
+.win{color:var(--win)}.lose{color:var(--lose)}
+input,button{font:inherit;color:var(--tx)}
+input{width:100%;background:#070b16;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:16px}
+button{background:#131c35;border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.gold{width:100%;background:var(--gold);color:#1a1405;font-weight:700;border:0;padding:11px;margin:8px 0}
+.mn{justify-content:space-between;margin-bottom:8px}.mn b{font-size:16px;letter-spacing:.08em}.mn button{width:48px}
+.seg{display:flex;gap:6px}.seg button{flex:1;padding:8px 2px;font-size:13px}
+.seg button.on{background:var(--gold);color:#1a1405;font-weight:700;border-color:var(--gold)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:var(--mut);font-weight:500;text-align:right;padding:4px 8px;white-space:nowrap}
+td{padding:7px 8px;text-align:right;border-top:1px solid var(--line);white-space:nowrap}
+td:first-child,th:first-child{text-align:left}
+td small{display:block;color:var(--mut);font-size:11px}
+.scr{overflow-x:auto}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px}
+.wd{text-align:center;font-size:11px;color:var(--mut)}
+.dc{min-height:52px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:3px 1px;text-align:center;font-size:12px}
+.dc i{display:block;font-style:normal;font-size:10px;letter-spacing:-.04em}
+.dc.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.dc.td span{color:var(--gold);font-weight:700}
+.rec{display:flex;justify-content:space-between;gap:8px;padding:9px 4px;border-bottom:1px solid #131c35}
+.rec small{display:block;color:var(--mut);font-size:12px}
+.rt{text-align:right}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--gold)}
+.tk{fill:var(--mut);font-size:10px}
+.ic{width:56px;height:56px;border-radius:12px;object-fit:cover}
+.note{color:var(--mut);font-size:12px;line-height:1.9;margin:20px 4px 6px}
+.nav{position:sticky;bottom:0;margin:auto -10px 0;z-index:20;display:flex;background:#080d1a;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav button{flex:1;border:0;border-radius:0;background:transparent;color:var(--mut);padding:9px 0 7px;font-size:11px}
+.nav button b{display:block;font-size:19px;font-weight:400}
+.nav button.on{color:var(--gold);font-weight:700}
+.mo{position:fixed;inset:0;background:#000c;z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.md{background:#0a1020;border:1px solid var(--line);border-radius:16px 16px 0 0;width:100%;max-width:560px;padding:16px;max-height:92vh;overflow:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.md label{display:block;margin:8px 0;font-size:12px;color:var(--mut)}
+.two{display:flex;gap:8px}.two label{flex:1}
+.btns{display:flex;gap:8px;margin-top:12px}.btns button{flex:1}.btns .gold{margin:0;width:auto}
+textarea{width:100%;height:240px;background:#070b16;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:8px;font-size:16px;line-height:1.5;font-family:inherit}
+</style>
+</head>
+<body>
+<div id="app"><div id="v"></div>
+<div class="nav"><button data-p="0"><b>🏠</b>ホーム</button><button data-p="1"><b>📅</b>カレンダー</button><button data-p="2"><b>📊</b>集計</button><button data-p="3"><b>⚙️</b>設定</button></div></div>
+<script>
+var K='betlog1',G=['パチスロ','競馬','競輪','その他'],S,P=0,M,D,cmt=null,A={c:0,p:0};
+try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(!S||!S.recs)S={recs:[],set:{ws:0,dg:0},pic:''};
+S.set=S.set||{ws:0,dg:0};
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function $(s){return document.querySelector(s)}
+function uid(){return Math.random().toString(36).slice(2,9)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function pad(n){return('0'+n).slice(-2)}
+function ts(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+var today=ts(new Date());M=today.slice(0,7);D=today;
+function yen(n){return(n<0?'−':n>0?'+':'')+Math.abs(n).toLocaleString('ja-JP')}
+function k(v){var a=Math.abs(v);return(v<0?'−':'')+(a>=10000?(Math.round(a/1000)/10)+'万':a.toLocaleString('ja-JP'))}
+function bal(r){return(+r.ret||0)-(+r.inv||0)}
+function cls(b){return b>0?'win':b<0?'lose':''}
+function sum(rs){var i=0,o=0;rs.forEach(function(r){i+=+r.inv||0;o+=+r.ret||0});return{i:i,o:o,b:o-i,n:rs.length,r:i?Math.round(o/i*1000)/10:null}}
+function rate(x){return x.r===null?'-':x.r+'%'}
+function group(rs,f){var m={};rs.forEach(function(r){var ks=f(r);if(!Array.isArray(ks))ks=[ks];ks.forEach(function(q){(m[q]=m[q]||[]).push(r)})});return m}
+function mnav(){return'<div class="row mn"><button data-m="-1">‹</button><b>'+M.slice(0,4)+'年'+(+M.slice(5))+'月</b><button data-m="1">›</button></div>'}
+function table(m,ord){
+  var ks=ord?ord.filter(function(q){return m[q]}):Object.keys(m).sort();
+  if(!ks.length)return'<div class="mut">記録がありません</div>';
+  var h='<table><tr><th></th><th>件数</th><th>収支</th><th>回収率</th></tr>';
+  ks.forEach(function(q){var x=sum(m[q]);h+='<tr><td>'+esc(q)+'</td><td>'+x.n+'</td><td class="'+cls(x.b)+'">'+yen(x.b)+'</td><td>'+rate(x)+'</td></tr>'});
+  return h+'</table>';
+}
+function list(rs){
+  if(!rs.length)return'<div class="mut" style="padding:6px 2px">記録がありません</div>';
+  return rs.slice().sort(function(a,b){return a.date<b.date?1:-1}).map(function(r){
+    var b=bal(r);
+    return'<div class="rec" data-ed="'+r.id+'"><div><b>'+r.date.slice(5).replace('-','/')+'</b> <span class="tag">'+esc(r.game)+'</span>'+(r.tags?' <span class="mut">'+esc(r.tags)+'</span>':'')+(r.memo?'<small>'+esc(r.memo)+'</small>':'')+'</div><div class="rt"><b class="'+cls(b)+'">'+yen(b)+'</b><small>投資 '+(+r.inv||0).toLocaleString('ja-JP')+' ／ 回収 '+(+r.ret||0).toLocaleString('ja-JP')+'</small></div></div>';
+  }).join('');
+}
+function chart(){
+  var y=+M.slice(0,4),m=+M.slice(5),dim=new Date(y,m,0).getDate(),by={},last=0;
+  S.recs.forEach(function(r){if(r.date.slice(0,7)===M){var d=+r.date.slice(8);by[d]=(by[d]||0)+bal(r);if(d>last)last=d}});
+  var end=Math.max(M===today.slice(0,7)?+today.slice(8):dim,last),c=[0],v=0,i;
+  for(i=1;i<=end;i++){v+=by[i]||0;c.push(v)}
+  var hi=Math.max.apply(null,c.concat(0)),lo=Math.min.apply(null,c.concat(0));if(hi===lo)hi=lo+1000;
+  var W=340,H=180,L=52,R=10,T=10,B=22;
+  function X(d){return L+(end?d/end:0)*(W-L-R)}
+  function Y(q){return T+(hi-q)/(hi-lo)*(H-T-B)}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%">',ticks=[hi,0,lo].filter(function(q,j,a){return a.indexOf(q)===j});
+  ticks.forEach(function(q){s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(q)+'" y2="'+Y(q)+'" stroke="'+(q===0?'#8791ad':'#1d2a4a')+'" stroke-width="1"'+(q===0?' stroke-dasharray="4 3"':'')+'/><text class="tk" x="'+(L-6)+'" y="'+(Y(q)+3)+'" text-anchor="end">'+k(q)+'</text>'});
+  [1,5,10,15,20,25,30].forEach(function(d){if(d<=end)s+='<text class="tk" x="'+X(d)+'" y="'+(H-6)+'" text-anchor="middle">'+d+'</text>'});
+  s+='<polyline fill="none" stroke="#d4af37" stroke-width="2" points="'+c.map(function(q,d){return X(d).toFixed(1)+','+Y(q).toFixed(1)}).join(' ')+'"/>';
+  s+='<circle cx="'+X(end)+'" cy="'+Y(c[end])+'" r="3.5" fill="#d4af37"/></svg>';
+  return s;
+}
+function home(){
+  var rs=S.recs.filter(function(r){return r.date.slice(0,7)===M}),t=sum(rs);
+  return'<h1>BET LOG</h1>'+mnav()+'<div class="card"><div class="mut">この月の収支</div><div class="big '+cls(t.b)+'">'+yen(t.b)+'円</div><div class="mut">投資 '+t.i.toLocaleString('ja-JP')+' ／ 回収 '+t.o.toLocaleString('ja-JP')+' ／ 回収率 '+rate(t)+'</div></div>'
+   +'<button class="gold" data-add="'+today+'">＋ 今日の収支を記録</button>'
+   +'<h2>月間の推移</h2><div class="card">'+chart()+'</div>'
+   +'<h2>競技別</h2><div class="card scr">'+table(group(rs,function(r){return r.game||'その他'}),G)+'</div>'
+   +'<h2>この月の記録</h2>'+list(rs);
+}
+function calp(){
+  var y=+M.slice(0,4),m=+M.slice(5),dim=new Date(y,m,0).getDate(),ws=S.set.ws,off=(new Date(y,m-1,1).getDay()-ws+7)%7,nm='日月火水木金土',h=mnav()+'<div class="cal">',i,d;
+  for(i=0;i<7;i++)h+='<div class="wd">'+nm[(i+ws)%7]+'</div>';
+  for(i=0;i<off;i++)h+='<div></div>';
+  for(d=1;d<=dim;d++){
+    var ds=M+'-'+pad(d),rs=S.recs.filter(function(r){return r.date===ds}),b=sum(rs).b;
+    h+='<div class="dc'+(ds===D?' sel':'')+(ds===today?' td':'')+'" data-d="'+ds+'"><span>'+d+'</span>'+(rs.length?'<i class="'+cls(b)+'">'+(b?(b<0?'−':'+')+k(Math.abs(b)):'±0')+'</i>':'')+'</div>';
+  }
+  var dr=S.recs.filter(function(r){return r.date===D});
+  return h+'</div><h2>'+D.slice(5).replace('-','/')+' の記録</h2><button class="gold" data-add="'+D+'">＋ この日の収支を追加</button>'+list(dr);
+}
+function aggp(){
+  var C=[['競技',function(r){return r.game||'その他'},G],['曜日',function(r){return'日月火水木金土'[new Date(r.date+'T00:00').getDay()]+'曜'},['日曜','月曜','火曜','水曜','木曜','金曜','土曜']],['タグ',function(r){var t=(r.tags||'').split(/[,、\s]+/).filter(Boolean);return t.length?t:['（タグなし）']},null]][A.c];
+  var pf=A.p?function(r){return r.date.slice(0,4)}:function(r){return r.date.slice(0,7)};
+  var h='<h1>集計</h1><div class="seg">'+['競技別','曜日別','タグ別'].map(function(t,i){return'<button data-ac="c" data-v="'+i+'"'+(A.c===i?' class="on"':'')+'>'+t+'</button>'}).join('')+'</div><div class="seg" style="margin:8px 0 12px">'+['月別','年別'].map(function(t,i){return'<button data-ac="p" data-v="'+i+'"'+(A.p===i?' class="on"':'')+'>'+t+'</button>'}).join('')+'</div>';
+  if(!S.recs.length)return h+'<div class="mut">記録がありません</div>';
+  var gm=group(S.recs,C[1]),ks=C[2]?C[2].filter(function(q){return gm[q]}):Object.keys(gm).sort();
+  var ps=Object.keys(group(S.recs,pf)).sort().slice(-12);
+  function cells(rs){var bp=group(rs,pf),o='';ps.forEach(function(p){if(bp[p]){var b=sum(bp[p]).b;o+='<td class="'+cls(b)+'">'+yen(b)+'</td>'}else o+='<td class="mut">-</td>'});var t=sum(rs);return o+'<td><span class="'+cls(t.b)+'">'+yen(t.b)+'</span><small>'+rate(t)+'</small></td>'}
+  h+='<div class="card scr"><table><tr><th>'+C[0]+'</th>'+ps.map(function(p){return'<th>'+(A.p?p+'年':p.slice(2).replace('-','/'))+'</th>'}).join('')+'<th>合計</th></tr>';
+  ks.forEach(function(q){h+='<tr><td>'+esc(q)+'</td>'+cells(gm[q])+'</tr>'});
+  return h+'<tr><td>全体</td>'+cells(S.recs)+'</tr></table></div>';
+}
+function setp(){
+  function sg(key,labels){return'<div class="seg" style="margin:6px 0 12px">'+labels.map(function(t,i){return'<button data-s="'+key+'" data-v="'+i+'"'+(S.set[key]===i?' class="on"':'')+'>'+t+'</button>'}).join('')+'</div>'}
+  return'<h1>設定</h1><div class="card"><div class="mut">週の始まり</div>'+sg('ws',['日曜','月曜'])+'<div class="mut">記録を追加するときの最初の競技</div>'+sg('dg',G)+'</div>'
+   +'<h2>ホーム画面のアイコン画像</h2><div class="card row">'+(S.pic?'<img class="ic" src="'+S.pic+'" alt="">':'')+'<button data-ic>画像を選ぶ</button></div><div class="mut" style="margin:0 4px">選んだあとに、Safariの共有から「ホーム画面に追加」を押してください。</div>'
+   +'<h2>バックアップ</h2><div class="card row"><button class="sp" data-ex>書き出す</button><button class="sp" data-im>取り込む</button></div>'
+   +'<div class="note">BET LOGは、収支を記録するためのサービスです。賭けや遊技の場を提供するものではありません。<br>競馬・競輪は20歳未満、パチンコ・パチスロは18歳未満の方は、法律で購入や遊技が禁じられています。<br>のめり込みが心配なときは、無理をせず、お住まいの地域の精神保健福祉センターなどにご相談ください。</div>';
+}
+function render(){
+  $('#v').innerHTML=[home,calp,aggp,setp][P]();
+  document.querySelectorAll('.nav button').forEach(function(b){b.classList.toggle('on',+b.dataset.p===P)});
+}
+function go(n){if(n<0||n>3||n===P)return;P=n;window.scrollTo(0,0);render()}
+function modal(h){var m=document.createElement('div');m.className='mo';m.innerHTML='<div class="md">'+h+'</div>';document.body.appendChild(m);m.addEventListener('click',function(e){if(e.target===m){m.remove();cmt=null}});return m}
+function edit(id,date){
+  var r=id?S.recs.find(function(x){return x.id===id}):{id:uid(),date:date||today,game:G[S.set.dg||0],inv:'',ret:'',tags:'',memo:'',fresh:1},g=r.game;
+  var m=modal('<label>日付<input id="f1" type="date" value="'+r.date+'"></label><div class="seg" id="gs"></div><div class="two"><label>投資（円）<input id="f2" type="number" inputmode="numeric" value="'+esc(r.inv)+'"></label><label>回収（円）<input id="f3" type="number" inputmode="numeric" value="'+esc(r.ret)+'"></label></div><div id="pv" class="mut" style="margin-top:6px"></div><label>タグ（カンマ区切り）<input id="f4" value="'+esc(r.tags)+'"></label><label>メモ<input id="f5" value="'+esc(r.memo)+'"></label><div class="btns"><button class="gold" id="sv">保存</button>'+(r.fresh?'':'<button id="dl">削除</button>')+'<button id="cl">閉じる</button></div>');
+  function sg(){m.querySelector('#gs').innerHTML=G.map(function(x){return'<button data-g="'+x+'"'+(x===g?' class="on"':'')+'>'+x+'</button>'}).join('')}
+  function pv(){var i=+m.querySelector('#f2').value||0,o=+m.querySelector('#f3').value||0;m.querySelector('#pv').innerHTML='収支 <b class="'+cls(o-i)+'">'+yen(o-i)+'円</b> ／ 回収率 '+(i?Math.round(o/i*1000)/10+'%':'-')}
+  sg();pv();
+  m.querySelector('#gs').onclick=function(e){var b=e.target.closest('[data-g]');if(b){g=b.dataset.g;sg()}};
+  m.querySelector('#f2').oninput=m.querySelector('#f3').oninput=pv;
+  function fin(){m.remove();cmt=null;render()}
+  cmt=function(auto){
+    var dv=m.querySelector('#f1').value,a=m.querySelector('#f2').value,b=m.querySelector('#f3').value,t=m.querySelector('#f4').value,n=m.querySelector('#f5').value;
+    if(!dv)return false;
+    if(auto&&r.fresh&&!(a||b||t||n))return false;
+    r.date=dv;r.game=g;r.inv=a;r.ret=b;r.tags=t;r.memo=n;
+    if(r.fresh){delete r.fresh;S.recs.push(r)}
+    D=dv;M=dv.slice(0,7);save();return true;
+  };
+  m.querySelector('#sv').onclick=function(){if(cmt())fin()};
+  m.querySelector('#cl').onclick=fin;
+  if(!r.fresh)m.querySelector('#dl').onclick=function(){S.recs=S.recs.filter(function(x){return x.id!==r.id});save();fin()};
+}
+function backup(mode){
+  var m=modal(mode?'<div class="mut">書き出した文章を貼り付けてください。今ある記録は消えず、足りない分が追加されます。</div><textarea id="tx"></textarea><div class="mut" id="er" style="margin-top:6px"></div><div class="btns"><button class="gold" id="ok">取り込む</button><button id="cl">閉じる</button></div>':'<div class="mut">全部を選んでコピーしてください。</div><textarea id="tx" readonly>'+esc(JSON.stringify({recs:S.recs,set:S.set}))+'</textarea><div class="btns"><button id="cl">閉じる</button></div>');
+  m.querySelector('#cl').onclick=function(){m.remove()};
+  if(mode)m.querySelector('#ok').onclick=function(){
+    try{
+      var o=JSON.parse(m.querySelector('#tx').value),ids={};
+      S.recs.forEach(function(r){ids[r.id]=1});
+      o.recs.forEach(function(r){if(r&&r.id&&r.date&&!ids[r.id])S.recs.push(r)});
+      save();m.remove();render();
+    }catch(e){m.querySelector('#er').textContent='読み取れませんでした。文章を全部貼り付けているか確認してください。'}
+  };
+}
+function icon(){
+  var l=$('#ti');
+  if(S.pic){l.href=S.pic;return}
+  var c=document.createElement('canvas');c.width=c.height=180;
+  var x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,180);
+  g.addColorStop(0,'#0b1226');g.addColorStop(1,'#1e3064');
+  x.fillStyle=g;x.fillRect(0,0,180,180);
+  x.fillStyle='#d4af37';x.textAlign='center';x.font='bold 54px sans-serif';
+  x.fillText('BET',90,86);x.fillText('LOG',90,142);
+  l.href=c.toDataURL('image/png');
+}
+function pick(){
+  var f=document.createElement('input');f.type='file';f.accept='image/*';
+  f.onchange=function(){
+    var x=f.files[0];if(!x)return;
+    var fr=new FileReader();
+    fr.onload=function(){
+      var im=new Image();
+      im.onload=function(){
+        var c=document.createElement('canvas');c.width=c.height=180;
+        var q=Math.min(im.width,im.height);
+        c.getContext('2d').drawImage(im,(im.width-q)/2,(im.height-q)/2,q,q,0,0,180,180);
+        S.pic=c.toDataURL('image/jpeg',0.9);save();icon();render();
+      };
+      im.src=fr.result;
+    };
+    fr.readAsDataURL(x);
+  };
+  f.click();
+}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-p],[data-m],[data-d],[data-add],[data-ed],[data-ac],[data-s],[data-ic],[data-ex],[data-im]');
+  if(!t||t.closest('.mo'))return;
+  var d=t.dataset;
+  if(d.p!==undefined)go(+d.p);
+  else if(d.m!==undefined){var dt=new Date(+M.slice(0,4),+M.slice(5)-1+ +d.m,1);M=dt.getFullYear()+'-'+pad(dt.getMonth()+1);D=M===today.slice(0,7)?today:M+'-01';render()}
+  else if(d.d!==undefined){D=d.d;render()}
+  else if(d.add!==undefined)edit(null,d.add);
+  else if(d.ed!==undefined)edit(d.ed);
+  else if(d.ac!==undefined){A[d.ac]=+d.v;render()}
+  else if(d.s!==undefined){S.set[d.s]=+d.v;save();render()}
+  else if(d.ic!==undefined)pick();
+  else if(d.ex!==undefined)backup(0);
+  else if(d.im!==undefined)backup(1);
+});
+document.addEventListener('visibilitychange',function(){if(document.hidden&&cmt)cmt(true)});
+window.addEventListener('pagehide',function(){if(cmt)cmt(true)});
+var sx=0,sy=0,sok=false;
+document.addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY;sok=e.touches.length===1&&!e.target.closest('.mo,.scr,input,textarea')},{passive:true});
+document.addEventListener('touchend',function(e){if(!sok)return;sok=false;var t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)go(P+(dx<0?1:-1))},{passive:true});
+icon();render();
+</script>
+</body>
+</html>
